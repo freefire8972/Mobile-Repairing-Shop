@@ -1,0 +1,634 @@
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mobile Repair Shop</title>
+  <style>
+    /* Base */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    /* Animated Gradient Background */
+    body { 
+      background: linear-gradient(135deg, #ffe3ec, #c1d3fe, #d5f5e3, #f9e79f, #d7bde2);
+      background-size: 400% 400%;
+      animation: gradientAnimation 20s ease infinite;
+      color: #333;
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+    
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    header { 
+      text-align: center; 
+      padding: 1rem; 
+      font-size: 1.8rem;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.4) 50%, 
+        rgba(255,255,255,0) 100%);
+      animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Tabs */
+    nav { 
+      display: flex; 
+      justify-content: space-around; 
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+      margin: 0 10px;
+    }
+    
+    nav button {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      position: relative;
+      z-index: 1;
+    }
+    
+    nav button::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      background: rgba(193, 211, 254, 0.3);
+      z-index: -1;
+      transition: height 0.3s ease;
+    }
+    
+    nav button:hover::after { height: 100%; }
+    
+    nav button.active { 
+      background: rgba(193, 211, 254, 0.5); 
+      color: #2c3e50;
+    }
+    
+    nav button.active::after { height: 100%; }
+
+    .tab-content { 
+      display: none; 
+      padding: 1rem; 
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .tab-content.active { 
+      display: block; 
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Inputs & Buttons */
+    .row { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 0.5rem; 
+      margin-bottom: 1rem;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .row input, .row button { 
+      flex: 1; 
+      padding: 0.65rem; 
+      border: 1px solid #ccc; 
+      border-radius: 8px; 
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .row input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+    }
+    
+    .row button { 
+      background: linear-gradient(to right, #4CAF50, #45a049);
+      color: #fff; 
+      border: none; 
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .row button:hover { 
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .row button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .row button:focus:not(:active)::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% { transform: scale(0, 0); opacity: 0.5; }
+      20% { transform: scale(25, 25); opacity: 0.3; }
+      100% { transform: scale(40, 40); opacity: 0; }
+    }
+
+    /* Entries */
+    .entry { 
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px; 
+      padding: 1rem; 
+      margin-bottom: 0.75rem; 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-left: 5px solid;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .entry:hover { 
+      transform: translateY(-5px); 
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+    
+    .entry::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #4CAF50, #2196F3, #FF9800);
+      opacity: 0.7;
+    }
+    
+    .entry b { 
+      font-size: 1.1rem; 
+      color: #2c3e50;
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .entry small { 
+      color: #666; 
+      display: block;
+      margin: 3px 0;
+    }
+    
+    .entry .details {
+      margin: 8px 0;
+      padding: 8px 0;
+      border-top: 1px dashed #eee;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .btn-small {
+      padding: 0.35rem 0.75rem;
+      margin-right: 0.35rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .btn-small:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .status-pending   { 
+      background: linear-gradient(to right, #fff8e1, #ffecb3);
+      border-left-color: #FF9800;
+    }
+    .status-repairing { 
+      background: linear-gradient(to right, #e1f5fe, #b3e5fc);
+      border-left-color: #2196F3;
+    }
+    .status-delivered { 
+      background: linear-gradient(to right, #e8f5e9, #c8e6c9);
+      border-left-color: #4CAF50;
+    }
+    
+    .btn-status   { 
+      background: linear-gradient(to right, #FF9800, #F57C00);
+      color: #fff;
+      animation: pulse 2s infinite;
+    }
+    .btn-deliver  { 
+      background: linear-gradient(to right, #4CAF50, #2E7D32);
+      color: #fff; 
+      animation: pulse 2s infinite 0.5s;
+    }
+    .btn-payment  { 
+      background: linear-gradient(to right, #00796b, #004d40);
+      color: #fff; 
+      animation: pulse 2s infinite 1s;
+    }
+    .btn-delete   { 
+      background: linear-gradient(to right, #d32f2f, #b71c1c);
+      color: #fff; 
+    }
+    .btn-edit     { 
+      background: linear-gradient(to right, #1976d2, #0d47a1);
+      color: #fff; 
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0.1); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(0,0,0,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    }
+
+    /* Summary */
+    #summaryBox { 
+      background: rgba(255, 255, 255, 0.9); 
+      padding: 1.5rem; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      animation: slideIn 0.5s ease-out;
+      border-left: 5px solid #9c27b0;
+    }
+    
+    #summaryBox div { 
+      margin-bottom: 0.75rem; 
+      padding: 0.5rem;
+      border-bottom: 1px solid #eee;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    
+    #summaryBox div:last-child {
+      border-bottom: none;
+    }
+    
+    .profit-highlight {
+      color: #4CAF50;
+      font-weight: bold;
+      animation: highlight 1.5s infinite;
+    }
+    
+    @keyframes highlight {
+      0% { color: #4CAF50; }
+      50% { color: #FF9800; }
+      100% { color: #4CAF50; }
+    }
+    
+    /* Delete Button */
+    .delete-all-btn {
+      background: linear-gradient(to right, #d32f2f, #b71c1c);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 1.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: block;
+      width: 100%;
+    }
+    
+    .delete-all-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      nav { flex-direction: column; }
+      .row { flex-direction: column; }
+      .row input, .row button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>📱 Mobile Repair Shop</header>
+  <nav>
+    <button id="tab-repair"   onclick="switchTab('repair')" class="active">Pending</button>
+    <button id="tab-complete" onclick="switchTab('complete')">Delivered</button>
+    <button id="tab-recharge" onclick="switchTab('recharge')">Recharge</button>
+    <button id="tab-summary"  onclick="switchTab('summary')">Profit</button>
+  </nav>
+
+  <!-- Pending & Repairing -->
+  <div id="repair" class="tab-content active">
+    <div class="row">
+      <input type="date" id="rdate">
+      <input placeholder="Customer name" id="rcustomer">
+      <input type="number"
+      placeholder="Mobile no." id="rnumber">
+      <input placeholder="Model" id="rmodel">
+      <input placeholder="Problem" id="rproblem">
+      <input type="number" placeholder="Cost" id="rcost">
+      <input type="number" placeholder="Advance" id="radvance">
+      <button onclick="addRepair()">Add Repair</button>
+    </div>
+    <div id="repairList"></div>
+  </div>
+
+  <!-- Delivered -->
+  <div id="complete" class="tab-content">
+    <div id="completeList"></div>
+  </div>
+
+  <!-- Recharge -->
+  <div id="recharge" class="tab-content">
+    <div class="row">
+      <input placeholder="Name" id="rechargeName">
+      <input placeholder="Mobile" id="rechargeNumber">
+      <input type="number" placeholder="Price" id="rechargePrice">
+      <input type="number" placeholder="Profit" id="rechargeProfit">
+      <button onclick="addRecharge()">Submit Recharge</button>
+    </div>
+    <div id="rechargeList"></div>
+  </div>
+
+  <!-- Summary -->
+  <div id="summary" class="tab-content">
+    <div id="summaryBox"></div>
+    <button class="delete-all-btn" onclick="deleteAllData()">🗑️ Delete All Data</button>
+  </div>
+  
+  <footer>
+    &copy; 2025 Mobile Repair Shop App | Made by _Gobinda_🙂
+  </footer>
+
+  <script>
+    // --- Data Load ---
+    let repairs   = JSON.parse(localStorage.getItem('repairs')   || '[]');
+    let recharges = JSON.parse(localStorage.getItem('recharges') || '[]');
+
+    function saveData() {
+      localStorage.setItem('repairs', JSON.stringify(repairs));
+      localStorage.setItem('recharges', JSON.stringify(recharges));
+      render();
+    }
+
+    // --- Tab Switching ---
+    function switchTab(id) {
+      document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+      document.getElementById('tab-'+id).classList.add('active');
+      document.getElementById(id).classList.add('active');
+      render();
+    }
+
+    // --- Add Repair ---
+    function addRepair() {
+      let r = {
+        id: Date.now(),
+        date:   document.getElementById('rdate').value || new Date().toISOString().slice(0,10),
+        customer: rcustomer.value,
+        number:   rnumber.value,
+        model:    rmodel.value,
+        problem:  rproblem.value,
+        cost:     +rcost.value,
+        advance:  +radvance.value,
+        afterPayment: 0,
+        profit:   0,
+        status:   'Pending'
+      };
+      
+      if (!r.customer || !r.model || !r.problem || !r.cost) {
+        alert('Please fill in required fields: Customer, Model, Problem, and Cost');
+        return;
+      }
+      
+      r.due = r.cost - (r.advance + r.afterPayment);
+      repairs.push(r);
+      
+      // clear
+      [rcustomer, rnumber, rmodel, rproblem, rcost, radvance].forEach(i=>i.value='');
+      saveData();
+      
+      // Visual feedback
+      const button = document.querySelector('#repair .row button');
+      button.classList.add('clicked');
+      setTimeout(() => button.classList.remove('clicked'), 300);
+    }
+
+    // --- Change Status ---
+    function changeStatus(id, to) {
+      let r = repairs.find(x=>x.id===id);
+      if(!r) return;
+      r.status = to;
+      r.due = r.cost - (r.advance + r.afterPayment);
+      saveData();
+    }
+
+    // --- Enter Payment & Profit Logic ---
+    function addPayment(id) {
+      let r = repairs.find(x=>x.id===id);
+      if(!r) return;
+      let pay = +prompt('Enter payment amount:',0) || 0;
+      r.afterPayment += pay;
+      r.due = r.cost - (r.advance + r.afterPayment);
+
+      // if ≥70% paid and profit not yet set or re-enterable
+      if((r.advance + r.afterPayment) / r.cost >= 0.7) {
+        let p = +prompt('Enter profit amount:',r.profit||0) || 0;
+        r.profit = p;
+      }
+      saveData();
+    }
+
+    // --- Delete Repair ---
+    function deleteRepair(id) {
+      if(!confirm('Delete this repair entry?')) return;
+      repairs = repairs.filter(r=>r.id!==id);
+      saveData();
+    }
+
+    // --- Recharge Functions ---
+    function addRecharge() {
+      if (!rechargeName.value || !rechargeNumber.value || !rechargePrice.value || !rechargeProfit.value) {
+        alert('Please fill in all fields');
+        return;
+      }
+      
+      recharges.push({
+        id: Date.now(),
+        name:   rechargeName.value,
+        number: rechargeNumber.value,
+        price:  +rechargePrice.value,
+        profit: +rechargeProfit.value
+      });
+      [rechargeName,rechargeNumber,rechargePrice,rechargeProfit].forEach(i=>i.value='');
+      saveData();
+      
+      // Visual feedback
+      const button = document.querySelector('#recharge .row button');
+      button.classList.add('clicked');
+      setTimeout(() => button.classList.remove('clicked'), 300);
+    }
+    
+    function deleteRecharge(id) {
+      if(!confirm('Delete this recharge entry?')) return;
+      recharges = recharges.filter(r=>r.id!==id);
+      saveData();
+    }
+
+    // --- Delete All Data ---
+    function deleteAllData() {
+      if(confirm('Delete ALL data? This cannot be undone!')) {
+        repairs = []; recharges = [];
+        saveData();
+      }
+    }
+
+    // --- Render Everything ---
+    function render() {
+      // Pending/Repairing List
+      repairList.innerHTML = repairs
+        .filter(r=>r.status!=='Delivered')
+        .map(r=>`
+          <div class="entry status-${r.status.toLowerCase()}">
+            <b>${r.date} — ${r.customer}</b>
+            <div class="details">
+              <small>Mobile: ${r.number}</small>
+              <small>Model: ${r.model}</small>
+              <small>Problem: ${r.problem}</small>
+              <small>Cost: ₹${r.cost} | Advance: ₹${r.advance} | Paid: ₹${r.afterPayment}</small>
+              <b>Due: ₹${r.due} | Profit: ₹${r.profit}</b>
+            </div>
+            <div>
+              <button class="btn-small btn-status" onclick="changeStatus(${r.id},'Repairing')">Repairing</button>
+              <button class="btn-small btn-deliver" onclick="changeStatus(${r.id},'Delivered')">Delivered</button>
+              <button class="btn-small btn-payment" onclick="addPayment(${r.id})">Payment</button>
+              <button class="btn-small btn-delete" onclick="deleteRepair(${r.id})">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+      // Delivered List
+      completeList.innerHTML = repairs
+        .filter(r=>r.status==='Delivered')
+        .map(r=>`
+          <div class="entry status-delivered">
+            <b>${r.date} — ${r.customer}</b>
+            <div class="details">
+              <small>Mobile: ${r.number}</small>
+              <small>Model: ${r.model}</small>
+              <small>Problem: ${r.problem}</small>
+              <small>Total: ₹${r.cost} | Advance: ₹${r.advance} | Paid: ₹${r.afterPayment}</small>
+              <b>Due: ₹${r.due} | Profit: ₹${r.profit}</b>
+            </div>
+            <div>
+              <button class="btn-small btn-payment" onclick="addPayment(${r.id})">Payment</button>
+              <button class="btn-small btn-delete"  onclick="deleteRepair(${r.id})">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+      // Recharge List
+      rechargeList.innerHTML = recharges
+        .map(r=>`
+          <div class="entry">
+            <b>${r.name} (${r.number})</b>
+            <div class="details">
+              <small>Price: ₹${r.price} | Profit: ₹${r.profit}</small>
+            </div>
+            <div>
+              <button class="btn-small btn-delete" onclick="deleteRecharge(${r.id})">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+      // Summary
+      let totalJobs   = repairs.length;
+      let totalCost   = repairs.reduce((a,b)=>a+b.cost,0);
+      let totalPaid   = repairs.reduce((a,b)=>a + b.advance + b.afterPayment,0);
+      let totalDue    = repairs.reduce((a,b)=>a + b.due,0);
+      let totalRProfit= repairs.reduce((a,b)=>a + b.profit,0);
+      let totalCProfit= recharges.reduce((a,b)=>a + b.profit,0);
+      let totalProfit = totalRProfit + totalCProfit;
+
+      summaryBox.innerHTML = `
+        <div>Total Jobs: ${totalJobs}</div>
+        <div>Total Repair Cost: ₹${totalCost}</div>
+        <div>Total Paid (Adv+Pay): ₹${totalPaid}</div>
+        <div>Total Due Left: ₹${totalDue}</div>
+        <div>Total Repair Profit: ₹${totalRProfit}</div>
+        <div>Total Recharge Profit: ₹${totalCProfit}</div>
+        <div class="profit-highlight">TOTAL PROFIT: ₹${totalProfit}</div>
+      `;
+    }
+
+    // Set default date to today
+    document.getElementById('rdate').valueAsDate = new Date();
+    
+    // initial render
+    render();
+  </script>
+
+</body>
+</html>
